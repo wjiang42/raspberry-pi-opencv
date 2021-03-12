@@ -8,19 +8,20 @@ Original file is located at
 """
 
 import numpy as np
-import argparse
+#import argparse
 import cv2
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 
 cam = cv2.VideoCapture(0)
-cam.set(cv2.CAP_PROP_FRAME_WIDTH, 1300)
-cam.set(cv2.CAP_PROP_FRAME_HEIGHT, 1500)
+cam.set(cv2.CAP_PROP_FPS, 30)
+#cam.set(cv2.CAP_PROP_FRAME_WIDTH, 1300)
+#cam.set(cv2.CAP_PROP_FRAME_HEIGHT, 1500)
 
 # im_path = "/content/000067.jpg"
 im_path = "C:\\Users\\TheTa\\Downloads\\opencv_object_detection\\000456.jpg"
 # protxt_path = "/content/deploy.prototxt"
-protxt_path = "C:\\Users\\TheTa\\Downloads\\opencv_object_detection\\deploy.prototxt"
-model_path = "C:\\Users\\TheTa\\Downloads\\opencv_object_detection\\mobilenet_iter_73000.caffemodel"
+protxt_path = "/home/ubuntu/raspberry-pi-opencv/deploy.prototxt"
+model_path = "/home/ubuntu/raspberry-pi-opencv/mobilenet_iter_73000.caffemodel"
 min_prob = 0.2
 
 CLASSES = ["background", "aeroplane", "bicycle", "bird", "boat",
