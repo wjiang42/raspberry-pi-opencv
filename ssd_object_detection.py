@@ -8,18 +8,12 @@ Original file is located at
 """
 
 import numpy as np
-#import argparse
 import cv2
-#import matplotlib.pyplot as plt
 
 cam = cv2.VideoCapture(0)
 cam.set(cv2.CAP_PROP_FPS, 30)
-#cam.set(cv2.CAP_PROP_FRAME_WIDTH, 1300)
-#cam.set(cv2.CAP_PROP_FRAME_HEIGHT, 1500)
 
-# im_path = "/content/000067.jpg"
 im_path = "C:\\Users\\TheTa\\Downloads\\opencv_object_detection\\000456.jpg"
-# protxt_path = "/content/deploy.prototxt"
 protxt_path = "/home/ubuntu/raspberry-pi-opencv/deploy.prototxt"
 model_path = "/home/ubuntu/raspberry-pi-opencv/mobilenet_iter_73000.caffemodel"
 min_prob = 0.2
@@ -33,7 +27,6 @@ net = cv2.dnn.readNetFromCaffe(protxt_path, model_path)
 
 while True:
 	ret, image = cam.read()
-	# image = cv2.imread(im_path)
 	(h, w) = image.shape[:2]
 	blob = cv2.dnn.blobFromImage(cv2.resize(image, (300, 300)), 0.007843, (300, 300), 127.5)
 
@@ -42,15 +35,31 @@ while True:
 
 	for i in np.arange(0, detections.shape[2]):
 		confidence = detections[0, 0, i, 2]
-		if confidence > min_prob:
+		if confidence > min_prob and int(detections[0, 0, i, 1]) == 15:
 			idx = int(detections[0, 0, i, 1])
 			box = detections[0, 0, i, 3:7] * np.array([w, h, w, h])
 			(startX, startY, endX, endY) = box.astype("int")
 			label = "{}: {:.2f}%".format(CLASSES[idx], confidence * 100)
+			midX = (int) ((startX+endX)/2)
+			midY = (int) ((startY+endY)/2)
+			mx = (int) (w/2)
+			my = (int) (h/2)
+			print(midX, midY)
+			distance = np.sqrt((mx-midX)^2 + (my-midY)^2)
+			print(distance)
+			if midX < mx:
+				print("go right")
+			else:
+				print("go left")
+			if midY < my:
+				print("go down")
+			else:
+				print("go up")
+			cv2.rectangle(image, (mx-1, my+1), (mx+1, my-1), (255, 180, 0), 2)
+			cv2.rectangle(image, (midX-1, midY+1), (midX+1, midY-1), (0, 180, 255), 2)
 			cv2.rectangle(image, (startX, startY), (endX, endY), (0, 180, 255), 2)
 			y = startY - 15 if startY - 15 > 15 else startY + 15
 			cv2.putText(image, label, (startX, y), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 180, 255), 2)
 
 	cv2.imshow("Output", image)
-	# plt.imshow(image)
 	cv2.waitKey(1)
