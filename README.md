@@ -1,8 +1,6 @@
 # raspberry-pi-opencv
 
-wellington
-
-'$sudo apt install fswebcam'
+$sudo apt install fswebcam
 
 
 
