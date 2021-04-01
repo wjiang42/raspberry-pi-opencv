@@ -2,12 +2,7 @@
 
 wellington
 
-`code stuff` 
-
-## title2
-
-text text text text text text text text text 
-text text text text text text text text text 
+'$sudo apt install fswebcam'
 
 
 
