@@ -14,8 +14,8 @@ cam = cv2.VideoCapture(0)
 cam.set(cv2.CAP_PROP_FPS, 30)
 
 im_path = "C:\\Users\\TheTa\\Downloads\\opencv_object_detection\\000456.jpg"
-protxt_path = "/home/ubuntu/raspberry-pi-opencv/deploy.prototxt"
-model_path = "/home/ubuntu/raspberry-pi-opencv/mobilenet_iter_73000.caffemodel"
+config_path = "/home/pi/raspberry-pi-opencv/yolov3-tiny.cfg"
+weights_path = "/home/pi/raspberry-pi-opencv/yolov3-tiny.weights"
 min_prob = 0.2
 
 CLASSES = ["background", "aeroplane", "bicycle", "bird", "boat",
@@ -23,7 +23,7 @@ CLASSES = ["background", "aeroplane", "bicycle", "bird", "boat",
 	"dog", "horse", "motorbike", "person", "pottedplant", "sheep",
 	"sofa", "train", "tvmonitor"]
 
-net = cv2.dnn.readNetFromCaffe(protxt_path, model_path)
+net = cv2.dnn.readNetFromDarknet(config_path, weights_path)
 
 while True:
 	ret, image = cam.read()
