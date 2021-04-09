@@ -11,55 +11,52 @@ import numpy as np
 import cv2
 
 cam = cv2.VideoCapture(0)
-cam.set(cv2.CAP_PROP_FPS, 30)
+cam.set(cv2.CAP_PROP_FPS, 7)
 
 im_path = "C:\\Users\\TheTa\\Downloads\\opencv_object_detection\\000456.jpg"
 config_path = "/home/pi/raspberry-pi-opencv/yolov3-tiny.cfg"
 weights_path = "/home/pi/raspberry-pi-opencv/yolov3-tiny.weights"
 min_prob = 0.2
 
-CLASSES = ["background", "aeroplane", "bicycle", "bird", "boat",
-	"bottle", "bus", "car", "cat", "chair", "cow", "diningtable",
-	"dog", "horse", "motorbike", "person", "pottedplant", "sheep",
-	"sofa", "train", "tvmonitor"]
+CLASSES = open('/home/pi/raspberry-pi-opencv/coco.names').read().strip().split('\n')
 
 net = cv2.dnn.readNetFromDarknet(config_path, weights_path)
-
 while True:
-	ret, image = cam.read()
-	(h, w) = image.shape[:2]
-	blob = cv2.dnn.blobFromImage(cv2.resize(image, (300, 300)), 0.007843, (300, 300), 127.5)
+    ret, image = cam.read()
+#   (h, w) = image.shape[:2]
+    (h, w) = (480, 640)
+    blob = cv2.dnn.blobFromImage(image, 1 / 255.0, (416, 416), swapRB=True, crop=False)
+    net.setInput(blob)
+    detections = net.forward()
+    
+    boxes = []
+    confidences = []
+    classIDs = []
+    
+    print(detections)
+    
+    for output in detections:
+        scores = output[5:]
+        classID = np.argmax(scores)
+        confidence = scores[classID]
+        if confidence > 0.5:
+            box = output[0:4] * np.array([w, h, w, h])
+            (centerX, centerY, width, height) = box.astype("int")
+            x = int(centerX - (width / 2))
+            y = int(centerY - (height / 2))
+            boxes.append([x, y, int(width), int(height)])
+            confidences.append(float(confidence))
+            classIDs.append(classID)
+    idxs = cv2.dnn.NMSBoxes(boxes, confidences, 0.5, 0.3)
+    if len(idxs) > 0:
+        for i in idxs.flatten():
+            (x, y) = (boxes[i][0], boxes[i][1])
+            (w, h) = (boxes[i][2], boxes[i][3])
+            cv2.rectangle(image, (x, y), (x + w, y + h), (0, 250, 180), 2)
+            text = "{}: {:.4f}".format(CLASSES[classIDs[i]], confidences[i])
+            cv2.putText(image, text, (x, y - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 250, 180), 2)
 
-	net.setInput(blob)
-	detections = net.forward()
+    cv2.imshow("Output", image)
+    cv2.waitKey(1)
 
-	for i in np.arange(0, detections.shape[2]):
-		confidence = detections[0, 0, i, 2]
-		if confidence > min_prob and int(detections[0, 0, i, 1]) == 15:
-			idx = int(detections[0, 0, i, 1])
-			box = detections[0, 0, i, 3:7] * np.array([w, h, w, h])
-			(startX, startY, endX, endY) = box.astype("int")
-			label = "{}: {:.2f}%".format(CLASSES[idx], confidence * 100)
-			midX = (int) ((startX+endX)/2)
-			midY = (int) ((startY+endY)/2)
-			mx = (int) (w/2)
-			my = (int) (h/2)
-			print(midX, midY)
-			distance = np.sqrt((mx-midX)^2 + (my-midY)^2)
-			print(distance)
-			if midX < mx:
-				print("go right")
-			else:
-				print("go left")
-			if midY < my:
-				print("go down")
-			else:
-				print("go up")
-			cv2.rectangle(image, (mx-1, my+1), (mx+1, my-1), (255, 180, 0), 2)
-			cv2.rectangle(image, (midX-1, midY+1), (midX+1, midY-1), (0, 180, 255), 2)
-			cv2.rectangle(image, (startX, startY), (endX, endY), (0, 180, 255), 2)
-			y = startY - 15 if startY - 15 > 15 else startY + 15
-			cv2.putText(image, label, (startX, y), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 180, 255), 2)
 
-	cv2.imshow("Output", image)
-	cv2.waitKey(1)
