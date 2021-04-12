@@ -23,9 +23,8 @@ CLASSES = open('/home/pi/raspberry-pi-opencv/coco.names').read().strip().split('
 net = cv2.dnn.readNetFromDarknet(config_path, weights_path)
 while True:
     ret, image = cam.read()
-#   (h, w) = image.shape[:2]
-    (h, w) = (480, 640)
-    blob = cv2.dnn.blobFromImage(image, 1 / 255.0, (416, 416), swapRB=True, crop=False)
+    (h, w) = image.shape[:2]
+    blob = cv2.dnn.blobFromImage(image, 1 / 255.0, (192, 192), swapRB=True, crop=False)
     net.setInput(blob)
     detections = net.forward()
     
@@ -33,13 +32,11 @@ while True:
     confidences = []
     classIDs = []
     
-    print(detections)
-    
     for output in detections:
         scores = output[5:]
         classID = np.argmax(scores)
         confidence = scores[classID]
-        if confidence > 0.5:
+        if confidence > 0.2:
             box = output[0:4] * np.array([w, h, w, h])
             (centerX, centerY, width, height) = box.astype("int")
             x = int(centerX - (width / 2))
@@ -47,7 +44,7 @@ while True:
             boxes.append([x, y, int(width), int(height)])
             confidences.append(float(confidence))
             classIDs.append(classID)
-    idxs = cv2.dnn.NMSBoxes(boxes, confidences, 0.5, 0.3)
+    idxs = cv2.dnn.NMSBoxes(boxes, confidences, 0.2, 0.3)
     if len(idxs) > 0:
         for i in idxs.flatten():
             (x, y) = (boxes[i][0], boxes[i][1])
