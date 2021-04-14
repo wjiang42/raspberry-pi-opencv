@@ -9,6 +9,7 @@ Original file is located at
 
 import numpy as np
 import cv2
+import time
 
 cam = cv2.VideoCapture(0)
 cam.set(cv2.CAP_PROP_FPS, 7)
@@ -22,9 +23,10 @@ CLASSES = open('/home/pi/raspberry-pi-opencv/coco.names').read().strip().split('
 
 net = cv2.dnn.readNetFromDarknet(config_path, weights_path)
 while True:
+    start = time.time()
     ret, image = cam.read()
     (h, w) = image.shape[:2]
-    blob = cv2.dnn.blobFromImage(image, 1 / 255.0, (192, 192), swapRB=True, crop=False)
+    blob = cv2.dnn.blobFromImage(image, 1 / 255.0, (128, 128), swapRB=True, crop=False)
     net.setInput(blob)
     detections = net.forward()
     
@@ -52,7 +54,8 @@ while True:
             cv2.rectangle(image, (x, y), (x + w, y + h), (0, 250, 180), 2)
             text = "{}: {:.4f}".format(CLASSES[classIDs[i]], confidences[i])
             cv2.putText(image, text, (x, y - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 250, 180), 2)
-
+    end = time.time()
+    print("fps = ", 1/(end-start))
     cv2.imshow("Output", image)
     cv2.waitKey(1)
 
