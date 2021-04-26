@@ -11,6 +11,40 @@ import numpy as np
 import cv2
 import time
 
+import adafruit_servokit
+global image_count
+image_count = 0
+
+class ServoKit(object):
+    default_angle = 90
+
+    def __init__(self, num_ports):
+        print("Initializing the servo...")
+        self.kit = adafruit_servokit.ServoKit(channels=16)
+        self.num_ports = num_ports
+        self.resetAll()
+        print("Initializing complete.")
+
+    def setAngle(self, port, angle):
+        if angle < 0:
+            self.kit.servo[port].angle = 0
+        elif angle > 180:
+            self.kit.servo[port].angle = 180
+        else:
+            self.kit.servo[port].angle = angle
+    
+    def getAngle(self, port):
+        return self.kit.servo[port].angle
+
+    def reset(self, port):
+        self.kit.servo[port].angle = self.default_angle
+
+    def resetAll(self):
+        for i in range(self.num_ports):
+            self.kit.servo[i].angle = self.default_angle
+
+servoKit = ServoKit(4)
+
 cam = cv2.VideoCapture(0)
 cam.set(cv2.CAP_PROP_FPS, 7)
 
@@ -54,6 +88,25 @@ while True:
             cv2.rectangle(image, (x, y), (x + w, y + h), (0, 250, 180), 2)
             text = "{}: {:.4f}".format(CLASSES[classIDs[i]], confidences[i])
             cv2.putText(image, text, (x, y - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 250, 180), 2)
+            if CLASSES[classIDs[i]] == "chair":
+                mx = int(x + (w/2))
+                my = int(y + (h/2))
+                cv2.rectangle(image, (mx, my), (mx + 1, my + 1), (0, 250, 180), 2)
+                cx = 640/2
+                cy = 480/2
+                motor_step = 2
+                print("mx: {} cx: {} my: {} cy: {}".format(mx, cx, my, cy))
+                print("mx-cx: {} my-cy: {}".format(abs(mx-cx), abs(my-cy)))
+                if abs(mx-cx) > 20:
+                    if mx < cx:
+                        servoKit.setAngle(1, servoKit.getAngle(1) - motor_step)
+                    else:
+                        servoKit.setAngle(1, servoKit.getAngle(1) + motor_step)
+                if abs(my-cy) > 20:
+                    if my < cy:
+                        servoKit.setAngle(0, servoKit.getAngle(0) + motor_step)
+                    else:
+                        servoKit.setAngle(0, servoKit.getAngle(0) - motor_step)
     end = time.time()
     print("fps = ", 1/(end-start))
     cv2.imshow("Output", image)
