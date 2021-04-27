@@ -34,9 +34,11 @@ class ServoKit(object):
 
 servoKit = ServoKit(4)
 
+#Accessing camera
 cam = cv2.VideoCapture(0)
 cam.set(cv2.CAP_PROP_FPS, 7)
 
+#Model and classes
 config_path = "/home/pi/raspberry-pi-opencv/yolov3-tiny.cfg"
 weights_path = "/home/pi/raspberry-pi-opencv/yolov3-tiny.weights"
 min_prob = 0.2
@@ -44,6 +46,7 @@ min_prob = 0.2
 CLASSES = open('/home/pi/raspberry-pi-opencv/coco.names').read().strip().split('\n')
 
 net = cv2.dnn.readNetFromDarknet(config_path, weights_path)
+
 while True:
     start = time.time()
     ret, image = cam.read()
@@ -76,15 +79,13 @@ while True:
             cv2.rectangle(image, (x, y), (x + w, y + h), (0, 250, 180), 2)
             text = "{}: {:.4f}".format(CLASSES[classIDs[i]], confidences[i])
             cv2.putText(image, text, (x, y - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 250, 180), 2)
-            if CLASSES[classIDs[i]] == "chair":
+            if CLASSES[classIDs[i]] == "person":
                 mx = int(x + (w/2))
                 my = int(y + (h/2))
                 cv2.rectangle(image, (mx, my), (mx + 1, my + 1), (0, 250, 180), 2)
                 cx = 640/2
                 cy = 480/2
                 motor_step = 2
-                print("mx: {} cx: {} my: {} cy: {}".format(mx, cx, my, cy))
-                print("mx-cx: {} my-cy: {}".format(abs(mx-cx), abs(my-cy)))
                 if abs(mx-cx) > 20:
                     if mx < cx:
                         servoKit.setAngle(1, servoKit.getAngle(1) - motor_step)
