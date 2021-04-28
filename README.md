@@ -1,4 +1,4 @@
-# raspberry-pi-opencv
+#### raspberry-pi-opencv
 
 This project is an attempt at object tracking using a Raspberry Pi 4. Through a Raspberry Pi camera attached to a rotating platform, an object detection model directs the platform to tilt up/down and left/right and follow the desired object.  As of yet, a custom model has not yet been trained, so the model must be instructed to react to a certain class of object. 
 
