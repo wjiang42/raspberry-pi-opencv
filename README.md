@@ -4,7 +4,7 @@ This project is an attempt at object tracking using a Raspberry Pi 4. Through a 
 
 Camera access and object detection uses OpenCV. The model used for testing was [yolov3-tiny](https://pjreddie.com/darknet/yolo/), which was trained on the COCO dataset and has [80 classes](https://github.com/pjreddie/darknet/blob/master/data/coco.names). The dependency necessary to control the servos of the pan-tilt platform were extracted from Arducam's servo demo [program](https://github.com/ArduCAM/PCA9685). 
 
-Despite speed of yolov3-tiny, the model only achieves a frame rate of 5-7 fps when the input is scaled to 128x128. This compounds the already relatively low mAP of yolov3-tiny. Combined with significant delay, the model often overshoots or fails to detect the object. 
+Despite speed of yolov3-tiny, the model only achieves a frame rate of 5-7 fps when the input is scaled to 128x128. This compounds the already relatively low mAP of yolov3-tiny.
 
 #### Components Used
 - Raspberry Pi 4
