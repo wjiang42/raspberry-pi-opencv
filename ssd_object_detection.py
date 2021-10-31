@@ -101,5 +101,3 @@ while True:
     print("fps = ", 1/(end-start))
     cv2.imshow("Output", image)
     cv2.waitKey(1)
-
-
