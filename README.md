@@ -12,12 +12,8 @@ The code necessary to control the servos of the pan-tilt platform was extracted 
 [program](https://github.com/ArduCAM/PCA9685), and the program reads camera data and for the object detection model using OpenCV. 
 
 ### **Analysis**
-While the program succeeds in its objective, it is flawed. Despite the speed YOLO offers, the model achieved a frame rate of only 5-7 fps, even after the input was downscaled to 128x128. The program also suffered input lag upwards of 2 seconds. This is almost certainly due to the relatively low computational power of Raspberry Pis, as the object detection model performed well on my laptop. The low resolution, poor frame rate, inaccuracy inherent to YOLO and outrageous delay mean that while the project works, it leaves much to be desired. Future improvements include installing an AI accelerator or using more powerful hardware and a custom model to mitigate the resource-intensive nature of object detection. 
+While the program succeeds in its objective, it is flawed. Despite the speed YOLO offers, the model achieved a frame rate of only 5-7 fps, even after the input was downscaled to 128x128. The program also suffered input lag upwards of 2 seconds. This is almost certainly due to the relatively low computational power of Raspberry Pis, as the object detection model performed well on my laptop. The low resolution, poor frame rate, inaccuracy inherent to YOLO and outrageous delay mean that while the project works, it leaves much to be desired. Future improvements include installing an AI accelerator or using more powerful hardware and a custom model to mitigate the resource-intensive nature of object detection.
 
-### **Code Summary**
-After importing and setting up the camera, models and data, the program reads camera data. In every frame, the model detects objects matching any of the 80 classes of objects it was trained on. For each detection, if the model is confident above a certain threshold and that detection is not determined by a function to be a duplicate, it is added to a list of detections. 
-
-If the list of detections is not empty, the program draws them on the frame. If the detection is of a specified class - in this case, a person - the program also draws the center of the detection and rotates the camera toward it. The program then displays the edited frame and frame rate before transitioning to the next frame. 
 
 ### **Components**
 - Raspberry Pi 4 
@@ -28,3 +24,6 @@ If the list of detections is not empty, the program draws them on the frame. If 
 - Google Colab
 - Gedit
 - VSCode
+
+Raspberry Pi 4 with Arducam Pan-Tilt Platform
+![Photo Nov 01, 11 03 55 AM](https://user-images.githubusercontent.com/78833367/148627569-b10628a1-00ef-4d25-89c4-8eaab8b7466a.jpg)
