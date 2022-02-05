@@ -1,7 +1,7 @@
 ## raspberry-pi-opencv
 
 ### **Abstract**
-The final project of my independent study was a portable object detection system designed to track objects using AI. From a Raspberry Pi 4 connected to a camera, the program detects a specific object and points the camera toward it, tracking it. Such a program has a variety of applications, such as moving cinematography, but a real world application will require extensive improvement to be effective. 
+The final project of my independent study is a portable object detection system designed to track objects using AI. From a Raspberry Pi 4 connected to a camera, the program detects a specific object and points the camera toward it, tracking it. Such a program has a variety of applications, such as moving cinematography, but a real world application will require extensive improvement to be effective.  
 
 ### **Overview**
 The project consists broadly of physical components and the AI program itself. The Raspberry Pi 4 is connected to a Raspberry Pi Camera mounted on an Arducam rotating platform, which can pitch and yaw. The program reads camera footage, an AI object detection model detects the specified object - in the final code, a person - and rotates the camera toward it. All code is written in Python and the Raspberry Pi runs on Linux. 
